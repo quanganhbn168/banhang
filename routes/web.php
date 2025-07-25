@@ -15,12 +15,15 @@ use App\Http\Controllers\SlugController;
 use UniSharp\LaravelFilemanager\Lfm;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\TeamController;
 
 
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['auth:admin']], function () {
     Lfm::routes();
 });
-Route::get("/", [HomeController::class,"index"])->name("home"); 
+Route::get("/", [HomeController::class,"index"])->name("home");
+Route::post('/dat-lich-hen', [BookingController::class, 'publicStore'])->name('bookings.public.store');
 Route::group(['prefix'=>'san-pham'], function(){
 
     Route::get('/san-pham-1', function(){
@@ -34,6 +37,10 @@ Route::group(["prefix"=>"danh-muc"], function(){
     Route::get("/{postCategory:slug}",[PostController::class,"postByCate"])->name("frontend.post.postByCate");
     Route::get("chi-tiet/{post:slug}",[PostController::class,"detail"])->name("frontend.post.detail");
 });
+Route::group(["prefix"=>"doi-ngu"], function(){
+    Route::get("/{team:slug}",[TeamController::class,"postByCate"])->name("frontend.post.postByCate");
+});
+
 Route::group(["prefix"=>"dich-vu"], function(){
     Route::get("/danh-muc/{slug}", [ServiceController::class,"serviceByCate"])->name("services.serviceByCate");
     Route::get("/{services:slug}", [ServiceController::class,"detail"])->name("services.show");

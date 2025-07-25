@@ -1,23 +1,23 @@
 @extends('layouts.admin')
-@section('title', 'Thêm cảm nhận học viên')
-@section('content_header', 'Thêm cảm nhận học viên')
+@section('title', 'Thêm Phản hồi')
+@section('content_header', 'Thêm Phản hồi')
 
 @section('content')
 <form action="{{ route('admin.testimonials.store') }}" method="POST" enctype="multipart/form-data">
-  @csrf
-  <div class="card">
-    <div class="card-body">
-      <x-form.input name="name" label="Họ tên" required />
-      <x-form.input name="position" label="Vị trí / Ngành" />
-      <x-form.image-input name="image" label="Ảnh học viên" />
-      <x-form.textarea name="content" label="Nội dung cảm nhận" required />
-      <x-form.switch name="status" label="Hiển thị" :checked="true" />
+    @csrf
+    <div class="card">
+        <div class="card-body">
+            <x-form.input name="name" label="Tên khách hàng" required />
+            <x-form.input name="position" label="Chức vụ/Vị trí" placeholder="VD: Giám đốc công ty ABC, Khách hàng..." />
+            <x-form.image-input name="image" label="Ảnh đại diện" />
+            <x-form.textarea name="content" label="Nội dung phản hồi" required />
+            <x-form.switch name="status" label="Hiển thị" :checked="true" />
+        </div>
+        <div class="card-footer">
+            <button type="submit" name="save" class="btn btn-primary">Lưu</button>
+            <button type="submit" name="save_new" class="btn btn-success">Lưu & Thêm mới</button>
+            <a href="{{ route('admin.testimonials.index') }}" class="btn btn-secondary">Quay lại</a>
+        </div>
     </div>
-    <div class="card-footer">
-      <button class="btn btn-primary">Lưu</button>
-      <button class="btn btn-success" name="save_new" value="1">Lưu & thêm mới</button>
-      <a href="{{ route('admin.testimonials.index') }}" class="btn btn-secondary">Quay lại</a>
-    </div>
-  </div>
 </form>
 @endsection

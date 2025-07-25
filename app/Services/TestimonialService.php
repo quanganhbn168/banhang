@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Testimonial;
-use Illuminate\Http\Request;
 use App\Traits\UploadImageTrait;
 
 class TestimonialService
@@ -12,48 +11,32 @@ class TestimonialService
 
     public function getAll()
     {
-        return Testimonial::latest()->paginate(20);
+        return Testimonial::latest()->paginate(10);
     }
 
-    public function create(Request $request): Testimonial
+    public function store(array $data): Testimonial
     {
-        $data = $request->validate([
-            'name'      => 'required|string|max:255',
-            'position'  => 'nullable|string|max:255',
-            'content'   => 'required|string',
-            'status'    => 'nullable|boolean',
-            'image'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $data['image'] = $this->uploadImage($request->file('image'), 'uploads/testimonials', 500, 500, true);
+        if (isset($data['image'])) {
+            $data['image'] = $this->uploadImage($data['image'], 'testimonials');
         }
 
         return Testimonial::create($data);
     }
 
-    public function update(Request $request, Testimonial $testimonial): Testimonial
+    public function update(array $data, Testimonial $testimonial): Testimonial
     {
-        $data = $request->validate([
-            'name'      => 'required|string|max:255',
-            'position'  => 'nullable|string|max:255',
-            'content'   => 'required|string',
-            'status'    => 'nullable|boolean',
-            'image'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
+        if (isset($data['image'])) {
+            $data['image'] = $this->uploadImage($data['image'], 'testimonials');
             $this->deleteImage($testimonial->image);
-            $data['image'] = $this->uploadImage($request->file('image'), 'uploads/testimonials', 500, 500, true);
         }
 
         $testimonial->update($data);
         return $testimonial;
     }
 
-    public function delete(Testimonial $testimonial): bool
+    public function delete(Testimonial $testimonial): void
     {
         $this->deleteImage($testimonial->image);
-        return $testimonial->delete();
+        $testimonial->delete();
     }
 }

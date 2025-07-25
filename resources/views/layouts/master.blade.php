@@ -50,6 +50,60 @@
     @include('partials.frontend.header')
     @yield('content')
     @include('partials.frontend.footer')
+    <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel">Thông tin Đặt lịch hẹn</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            {{-- Form sẽ submit tới một route chúng ta sẽ tạo ở dưới --}}
+            <form action="{{ route('bookings.public.store') }}" method="POST" id="bookingForm">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="customerName">Họ và tên</label>
+                        <input type="text" class="form-control" id="customerName" name="customer_name" placeholder="Nguyễn Văn A" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerPhone">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="customerPhone" name="customer_phone" placeholder="09xxxxxxxx" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceSelect">Chọn dịch vụ</label>
+                        <select class="form-control" id="serviceSelect" name="service_id" required>
+                            <option value="" disabled selected>-- Vui lòng chọn dịch vụ --</option>
+                            @php
+                            $dattruoc = DB::table('service_categories')->where("status",1)->get();
+                            @endphp
+                            @if(isset($dattruoc))
+                                @foreach ($dattruoc as $service)
+                                    <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookingStartTime">Chọn ngày giờ mong muốn</label>
+                        <input type="datetime-local" class="form-control" id="bookingStartTime" name="start_time" required>
+                    </div>
+                    {{-- Trường ẩn này sẽ chứa title được gộp lại bằng JavaScript --}}
+                    <input type="hidden" name="title" id="bookingTitle">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Gửi thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <script src="{{asset('/js/jquery-3.7.1.min.js')}}?{{time()}}"></script>
     <script src="{{asset('/vendor/bootstrap/popper.min.js')}}?{{time()}}"></script>
     <script src="{{asset('/vendor/bootstrap/js/bootstrap.min.js')}}?{{time()}}"></script>
@@ -88,7 +142,47 @@
             });
         });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const bookingForm = document.getElementById('bookingForm');
+    const customerNameInput = document.getElementById('customerName');
+    const customerPhoneInput = document.getElementById('customerPhone');
+    const serviceSelect = document.getElementById('serviceSelect');
+    const bookingTitleInput = document.getElementById('bookingTitle');
 
+    function updateBookingTitle() {
+        const name = customerNameInput.value.trim();
+        const phone = customerPhoneInput.value.trim();
+        const selectedServiceOption = serviceSelect.options[serviceSelect.selectedIndex];
+        const serviceText = selectedServiceOption.value ? selectedServiceOption.text : '';
+
+        if (name && phone && serviceText) {
+            // Gộp thông tin thành một chuỗi title duy nhất
+            bookingTitleInput.value = `Lịch hẹn: ${name} - ${phone} - ${serviceText}`;
+        } else {
+            bookingTitleInput.value = '';
+        }
+    }
+
+    // Lắng nghe sự kiện trên các trường input để cập nhật title
+    if (bookingForm) {
+        customerNameInput.addEventListener('input', updateBookingTitle);
+        customerPhoneInput.addEventListener('input', updateBookingTitle);
+        serviceSelect.addEventListener('change', updateBookingTitle);
+    }
+
+    // --- PHẦN BỔ SUNG: Chặn chọn ngày trong quá khứ ---
+    const startTimeInput = document.getElementById('bookingStartTime');
+    if (startTimeInput) {
+        // Lấy thời gian hiện tại
+        const now = new Date();
+        // Điều chỉnh múi giờ cho đúng với định dạng của input (YYYY-MM-DDTHH:mm)
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        // Set thuộc tính 'min' cho input
+        startTimeInput.min = now.toISOString().slice(0, 16);
+    }
+});
+</script>
     @stack('js')
 </body>
 </html>

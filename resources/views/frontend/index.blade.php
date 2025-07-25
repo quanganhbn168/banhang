@@ -3,6 +3,30 @@
 @push('css')
 <link rel="stylesheet" href="{{asset('vendor/glightbox/css/glightbox.min.css')}}?{{time()}}">
 <style>
+    /* CSS tùy chỉnh cho slider chứng chỉ */
+    .section.certificate {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+    .section.certificate .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .certificate-swiper {
+        width: 100%;
+        /* Thêm padding để các nút không bị che khuất */
+        padding: 0 40px;
+    }
+
+    /* Tùy chỉnh màu nút và pagination cho hợp với theme 'bg-primary' */
+    .certificate-swiper .swiper-button-next,
+    .certificate-swiper .swiper-button-prev,
+    .certificate-swiper .swiper-pagination-bullet-active {
+        color: #0d6efd; /* Màu primary mặc định của Bootstrap, anh có thể đổi */
+    }
+    .certificate-swiper .swiper-pagination-bullet-active {
+        background-color: #0d6efd;
+    }
     .doctor-img-wrapper {
     position: relative;
     overflow: hidden;
@@ -157,44 +181,33 @@ div#slider-tabContent {
 
 
 
-<section class="section testimonial position-relative text-white">
+@if(isset($testimonials) && $testimonials->isNotEmpty())
+<section class="section testimonial position-relative">
     <div class="container">
-    <h2 class="section-title text-center mb-5">Cảm nhận khách hàng</h2>
+        <h2 class="section-title text-center mb-5">Cảm nhận khách hàng</h2>
 
-    <div class="swiper testimonial-swiper">
-        <div class="swiper-wrapper">
-            @foreach([
-                ['name' => 'Nguyễn Minh Anh', 'avatar' => 'images/avatar/avatar1.jpg', 'rating' => 5, 'comment' => 'Dịch vụ tuyệt vời! Bác sĩ tận tâm, tôi hoàn toàn yên tâm khi điều trị tại đây.'],
-                ['name' => 'Trần Hữu Đức', 'avatar' => 'images/avatar/avatar2.jpg', 'rating' => 4, 'comment' => 'Không gian sạch sẽ, hiện đại. Nhân viên thân thiện và chuyên nghiệp.'],
-                ['name' => 'Phạm Thị Hằng', 'avatar' => 'images/avatar/avatar1.jpg', 'rating' => 5, 'comment' => 'Tôi đã giới thiệu cho nhiều người thân. Hoàn toàn hài lòng!'],
-                ['name' => 'Vũ Quang Trung', 'avatar' => 'images/avatar/avatar2.jpg', 'rating' => 4, 'comment' => 'Chi phí hợp lý, tư vấn rõ ràng trước điều trị, không phát sinh chi phí ẩn.'],
-                ['name' => 'Lê Thu Hà', 'avatar' => 'images/avatar/avatar1.jpg', 'rating' => 5, 'comment' => 'Tôi từng sợ đến nha khoa, nhưng ở đây thì rất nhẹ nhàng và dễ chịu.'],
-                ['name' => 'Đỗ Mạnh Cường', 'avatar' => 'images/avatar/avatar2.jpg', 'rating' => 5, 'comment' => 'Đăng ký nhanh gọn, được hỗ trợ tận tình từ lúc đến đến lúc về.'],
-                ['name' => 'Nguyễn Hồng Nhung', 'avatar' => 'images/avatar/avatar1.jpg', 'rating' => 5, 'comment' => 'Kết quả điều trị đúng như cam kết. Tôi rất hài lòng với lựa chọn của mình.'],
-                ['name' => 'Lâm Quốc Bảo', 'avatar' => 'images/avatar/avatar2.jpg', 'rating' => 4, 'comment' => 'Đội ngũ bác sĩ có tay nghề cao, mình cảm nhận rõ sự chuyên nghiệp.'],
-                ] as $item)
-            <div class="swiper-slide">
-                <div class="testimonial-item">
-                <div class="testimonial-avatar">
-                    <img src="{{ asset($item['avatar']) }}" alt="{{ $item['name'] }}">
-                </div>
-                <p class="testimonial-comment">"{{ $item['comment'] }}"</p>
-                <div class="testimonial-rating">
-                    @for($i = 1; $i <= 5; $i++)
-                    <i class="fa{{ $i <= $item['rating'] ? 's' : 'r' }} fa-star"></i>
-                        @endfor
+        <div class="swiper testimonial-swiper">
+            <div class="swiper-wrapper">
+                @foreach($testimonials as $testimonial)
+                <div class="swiper-slide">
+                    <div class="testimonial-item">
+                        <div class="testimonial-avatar">
+                            <img src="{{asset($testimonial->image)}}" alt="{{ $testimonial->name }}">
+                        </div>
+                        <p class="testimonial-comment">"{{ $testimonial->content }}"</p>
+                        <strong class="testimonial-name">{{ $testimonial->name }}</strong>
+                        <span class="testimonial-position">{{ $testimonial->position }}</span>
                     </div>
-                    <strong class="testimonial-name">{{ $item['name'] }}</strong>
                 </div>
+                @endforeach
             </div>
-            @endforeach
-        </div>
 
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
     </div>
 </section>
+@endif
 <section class="section sliderAfter">
     <div class="container">
         <h2 class="section-title">Trước & Sau</h2>
@@ -245,18 +258,29 @@ div#slider-tabContent {
         <h2 class="section-title">Báo chí nói gì về chúng tôi</h2>
     </div>
 </section>
+{{-- Chỉ hiển thị section nếu có dữ liệu chứng chỉ --}}
+@if(isset($certificates) && $certificates->isNotEmpty())
 <section class="section certificate px-0">
-    <h2 class="section-title bg-primary text-light py-2">Chứng chỉ Nha Khoa</h2>
+    <h2 class="section-title bg-primary text-light py-2">Chứng chỉ & Bằng cấp</h2>
     <div class="container">
         <div class="swiper certificate-swiper">
             <div class="swiper-wrapper">
+                {{-- Lặp qua từng chứng chỉ để tạo slide --}}
+                @foreach ($certificates as $certificate)
                 <div class="swiper-slide">
-                    <img src="" alt="">
+                    <img src="{{ $certificate->image_url }}" alt="{{ $certificate->name }}">
                 </div>
+                @endforeach
             </div>
+            
+            {{-- Các thành phần điều khiển slider (nên có) --}}
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>
+@endif
 @foreach($homeCategories as $postHome)
     @php
         $posts = $postHome->posts ?? collect();
@@ -438,32 +462,60 @@ div#slider-tabContent {
     });
 </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            new Swiper('.testimonial-swiper', {
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false,
-                },
-                spaceBetween: 20,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                breakpoints: {
-                    768: {
-                        slidesPerView: 2,
-                    },
-                    992: {
-                        slidesPerView: 3,
-                    },
-                    576: {
-                        slidesPerView: 1,
-                    },
-
-                }
-            });
+    if (document.querySelector('.testimonial-swiper')) {
+        const testimonialSwiper = new Swiper('.testimonial-swiper', {
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            spaceBetween: 30,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                320: { slidesPerView: 1, spaceBetween: 20 },
+                768: { slidesPerView: 2, spaceBetween: 30 },
+                1200: { slidesPerView: 4, spaceBetween: 30 }
+            }
         });
-    </script>
+    }
+</script>
+<script>
+    // Chỉ khởi tạo swiper nếu element tồn tại trên trang
+    if (document.querySelector('.certificate-swiper')) {
+        const swiper = new Swiper('.certificate-swiper', {
+            // Kích hoạt chạy lặp lại vô tận
+            loop: true,
+            
+            // Tự động chạy
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
 
+            // Khoảng cách giữa các slide
+            spaceBetween: 20,
+
+            // Kích hoạt các nút điều hướng và phân trang
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+
+            // Cấu hình responsive
+            breakpoints: {
+                320: { slidesPerView: 2, spaceBetween: 10 },
+                640: { slidesPerView: 3, spaceBetween: 15 },
+                1024: { slidesPerView: 4, spaceBetween: 20 },
+                1200: { slidesPerView: 5, spaceBetween: 20 }
+            }
+        });
+    }
+</script>
     @endpush

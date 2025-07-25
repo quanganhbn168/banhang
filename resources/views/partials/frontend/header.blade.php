@@ -26,11 +26,11 @@
                 </div>
 
                 {{-- Đặt hẹn --}}
-                <button class="btn btn-primary" title="Đặt lịch hẹn">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookingModal" title="Đặt lịch hẹn">
                     <i class="fa fa-calendar-check"></i>
                     <span>Đặt lịch hẹn</span>
                 </button>
-
+                
                 {{-- Gọi điện --}}
                 <a href="tel:{{ trim($setting->phone) }}" title="Gọi tư vấn">
                     <i class="fa fa-phone"></i>

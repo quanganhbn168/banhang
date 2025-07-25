@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'Thêm giảng viên')
-@section('content_header', 'Thêm giảng viên')
+@section('title', 'Thêm đội ngũ')
+@section('content_header', 'Thêm đội ngũ')
 
 @section('content')
 <form action="{{ route('admin.teams.store') }}" method="POST" enctype="multipart/form-data">
@@ -12,7 +12,7 @@
       <x-form.input name="hsk_level" label="Trình độ" />
       <x-form.input name="experience" label="Số năm kinh nghiệm" type="number" />
       <x-form.image-input name="image" label="Ảnh đại diện" />
-      <x-form.textarea name="bio" label="Giới thiệu chi tiết" />
+      <x-form.ckeditor name="bio" label="Giới thiệu chi tiết" />
     </div>
     <div class="card-footer">
       <button class="btn btn-primary">Lưu</button>

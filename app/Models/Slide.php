@@ -28,6 +28,7 @@ class Slide extends Model
     const TYPE_AFTER_BEFORE  = 2;
     const TYPE_POPUP         = 3;
     const TYPE_ADVERTISEMENT = 4;
+    const TYPE_NEWS = 5;
 
     public static function getTypeOptions(): array
     {
@@ -36,6 +37,7 @@ class Slide extends Model
             self::TYPE_AFTER_BEFORE  => 'Before & After',
             self::TYPE_POPUP         => 'Popup',
             self::TYPE_ADVERTISEMENT => 'Quảng cáo',
+            self::TYPE_NEWS => 'Báo chí',
         ];
     }
 

@@ -77,7 +77,7 @@ return [
     [
         'title' => 'Quản lý chứng chỉ',
         'icon' => 'bi bi-chat-square-quote',
-        'route' => 'admin.testimonials.index',
+        'route' => 'admin.certificates.index',
     ],
     
     [

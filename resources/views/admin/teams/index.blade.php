@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'Danh sách giảng viên')
-@section('content_header', 'Đội ngũ giảng viên')
+@section('title', 'Danh sách đội ngũ')
+@section('content_header', 'Đội ngũ bác sĩ')
 
 @section('content')
 <div class="card">
@@ -32,7 +32,7 @@
           <td>{{ $team->created_at->format('d/m/Y') }}</td>
           <td>
             <a href="{{ route('admin.teams.edit', $team) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-            <form action="{{ route('admin.teams.destroy', $team) }}" method="POST" class="d-inline" onsubmit="return confirm('Xoá giảng viên này?')">
+            <form action="{{ route('admin.teams.destroy', $team) }}" method="POST" class="d-inline" onsubmit="return confirm('Xoá đội ngũ này?')">
               @csrf @method('DELETE')
               <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
             </form>

@@ -12,6 +12,7 @@ use App\Models\Post;
 use App\Models\Intro;
 use App\Models\Testimonial;
 use App\Models\Team;
+use App\Models\Certificate;
 
 class HomeController extends Controller
 {
@@ -22,6 +23,8 @@ class HomeController extends Controller
         $intros = Intro::select("id","image","description","title")->get();
         $categories = Category::where('status',1)->where("is_home",1)->where("parent_id",0)->get();
         $serviceCategory = ServiceCategory::where('status', 1)->where("is_home",1)->where("parent_id",0)->get();
+        $certificates = Certificate::where('status', true)->latest()->get();
+
         $services = Service::where("status",1)->get();
         $homeCategories = PostCategory::where('status', 1)
             ->where('is_home', 1)
@@ -39,13 +42,14 @@ class HomeController extends Controller
             'intros',
             'testimonials',
             'teams',
-            'services'
+            'services',
+            'certificates'
         ));
     }
  
     public function search(Request $request)
     {
-        $keyword = trim($request->input('q'));
+        $keyword = trim($request->input('keyword'));
 
         $posts = Post::where('status', 1)
         ->where(function ($query) use ($keyword) {
@@ -55,6 +59,6 @@ class HomeController extends Controller
         ->latest()
         ->paginate(10);
 
-        return view('frontend.posts.result', compact('posts', 'keyword'));
+        return view('frontend.result', compact('posts', 'keyword'));
     }
 }

@@ -10,7 +10,7 @@
             ['label' => "Từ khóa: \"$keyword\""]
         ]" />
 
-        <h1 class="mb-4">Kết quả tìm kiếm cho: <strong>{{ $keyword }}</strong></h1>
+        <h1 class="mb-4">Kết quả tìm kiếm cho: <strong>"{{ $keyword }}"</strong></h1>
 
         @if($posts->count())
             @foreach($posts as $post)

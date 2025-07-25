@@ -48,4 +48,9 @@ class TeamController extends Controller
         $this->teamService->delete($team);
         return redirect()->route('admin.teams.index')->with('success', 'Xoá giảng viên thành công.');
     }
+
+    public function show(Team $team)
+    {
+        return view('frontend.team.show',compact("team"));
+    }
 }

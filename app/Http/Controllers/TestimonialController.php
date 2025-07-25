@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Testimonial;
-use Illuminate\Http\Request;
 use App\Services\TestimonialService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TestimonialController extends Controller
 {
-    public function __construct(protected TestimonialService $testimonialService) {}
+    protected $testimonialService;
+
+    public function __construct(TestimonialService $testimonialService)
+    {
+        $this->testimonialService = $testimonialService;
+    }
 
     public function index()
     {
@@ -23,13 +29,31 @@ class TestimonialController extends Controller
 
     public function store(Request $request)
     {
-        $this->testimonialService->create($request);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'content' => 'required|string',
+        ]);
 
-        $route = $request->has('save_new')
-            ? route('admin.testimonials.create')
-            : route('admin.testimonials.index');
+        $validated['status'] = $request->has('status');
+        
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image');
+        }
 
-        return redirect($route)->with('success', 'Thêm cảm nhận thành công.');
+        try {
+            $this->testimonialService->store($validated);
+
+            if ($request->input('save_new')) {
+                return redirect()->route('admin.testimonials.create')->with('success', 'Thêm phản hồi thành công!');
+            }
+
+            return redirect()->route('admin.testimonials.index')->with('success', 'Thêm phản hồi thành công!');
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi thêm phản hồi: ' . $e->getMessage());
+            return back()->with('error', 'Đã có lỗi xảy ra. Vui lòng thử lại.')->withInput();
+        }
     }
 
     public function edit(Testimonial $testimonial)
@@ -39,13 +63,36 @@ class TestimonialController extends Controller
 
     public function update(Request $request, Testimonial $testimonial)
     {
-        $this->testimonialService->update($request, $testimonial);
-        return redirect()->route('admin.testimonials.index')->with('success', 'Cập nhật cảm nhận thành công.');
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'content' => 'required|string',
+        ]);
+
+        $validated['status'] = $request->has('status');
+        
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image');
+        }
+
+        try {
+            $this->testimonialService->update($validated, $testimonial);
+            return redirect()->route('admin.testimonials.index')->with('success', 'Cập nhật phản hồi thành công!');
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi cập nhật phản hồi: ' . $e->getMessage());
+            return back()->with('error', 'Đã có lỗi xảy ra. Vui lòng thử lại.')->withInput();
+        }
     }
 
     public function destroy(Testimonial $testimonial)
     {
-        $this->testimonialService->delete($testimonial);
-        return redirect()->route('admin.testimonials.index')->with('success', 'Xoá cảm nhận thành công.');
+        try {
+            $this->testimonialService->delete($testimonial);
+            return redirect()->route('admin.testimonials.index')->with('success', 'Xóa phản hồi thành công!');
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi xóa phản hồi: ' . $e->getMessage());
+            return back()->with('error', 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+        }
     }
 }
